@@ -21,12 +21,11 @@ if(NOT ANDROID)
     if(Boost_VERSION LESS 106500)
       find_package(Boost REQUIRED python)
     else()
-      # This is a bit of a hack to suppress a warning
-      #   No header defined for python3; skipping header check
-      # Which should only affect Boost versions < 1.67
-      # Resolution for newer versions:
-      #  https://gitlab.kitware.com/cmake/cmake/issues/16391
-      if (Boost_VERSION LESS 106700)
+      # This is a bit of a hack to suppress a warning No header defined for
+      # python3; skipping header check Which should only affect Boost versions <
+      # 1.67 Resolution for newer versions:
+      # https://gitlab.kitware.com/cmake/cmake/issues/16391
+      if(Boost_VERSION LESS 106700)
         set(_Boost_PYTHON3_HEADERS "boost/python.hpp")
       endif()
       find_package(Boost COMPONENTS python3 REQUIRED)
@@ -37,13 +36,8 @@ else()
 endif()
 
 find_package(sensor_msgs REQUIRED)
-find_package(OpenCV 3 REQUIRED
-  COMPONENTS
-    opencv_core
-    opencv_imgproc
-    opencv_imgcodecs
-  CONFIG
-)
+find_package(OpenCV 4 REQUIRED COMPONENTS opencv_core opencv_imgproc
+                                          opencv_imgcodecs CONFIG)
 
 include_directories(include ${Boost_INCLUDE_DIRS})
 
@@ -53,10 +47,10 @@ endif()
 
 add_subdirectory(src)
 
-# cv_bridge_lib_dir is passed as APPEND_LIBRARY_DIRS for each ament_add_gtest call so
-# the project library that they link against is on the library path.
-# This is especially important on Windows.
-# This is overwritten each loop, but which one it points to doesn't really matter.
+# cv_bridge_lib_dir is passed as APPEND_LIBRARY_DIRS for each ament_add_gtest
+# call so the project library that they link against is on the library path.
+# This is especially important on Windows. This is overwritten each loop, but
+# which one it points to doesn't really matter.
 set(cv_bridge_lib_dir "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
 
 if(BUILD_TESTING)
@@ -69,11 +63,6 @@ ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 
 # install the include folder
-install(
-  DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION include/${PROJECT_NAME}
-)
+install(DIRECTORY include/${PROJECT_NAME}/ DESTINATION include/${PROJECT_NAME})
 
-ament_package(
-  CONFIG_EXTRAS "cmake/cv_bridge-extras.cmake.in"
-)
+ament_package(CONFIG_EXTRAS "cmake/cv_bridge-extras.cmake.in")
